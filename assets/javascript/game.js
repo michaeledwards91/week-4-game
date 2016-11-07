@@ -55,15 +55,20 @@ function setPlayerChar() {
 	IS THERE A BETTER WAY TO DO THIS??????????
 	would like to be able to do something like playerchar = document.getElementById(this.id).id 
 	but that returns a string value, not a reference to a variable*/
+	$(".selectableChar").unbind("click");
 	switch(this.id) {
 		case "hanSolo": {
 			playerChar = hanSolo;
 			removeFromAvail(hanSolo);
+			console.log(this);
 			$(this).attr("class", "selected");
+			$("#r2d2").attr("class", "selectableEnemy");
 			$("#r2d2").appendTo(".enemyCharactersWrapper");
 			$("#r2d2Hp").appendTo(".enemyCharactersWrapper");
+			$("#chewbacca").attr("class", "selectableEnemy");
 			$("#chewbacca").appendTo(".enemyCharactersWrapper");
 			$("#chewbaccaHp").appendTo(".enemyCharactersWrapper");
+			$("#darthVader").attr("class", "selectableEnemy");
 			$("#darthVader").appendTo(".enemyCharactersWrapper");
 			$("#darthVaderHp").appendTo(".enemyCharactersWrapper");
 		}
@@ -72,10 +77,13 @@ function setPlayerChar() {
 			playerChar = r2d2;
 			removeFromAvail(r2d2);
 			$(this).attr("class", "selected");
+			$("#hanSolo").attr("class", "selectableEnemy");
 			$("#hanSolo").appendTo(".enemyCharactersWrapper");
 			$("#hanSoloHp").appendTo(".enemyCharactersWrapper");
+			$("#chewbacca").attr("class", "selectableEnemy");
 			$("#chewbacca").appendTo(".enemyCharactersWrapper");
 			$("#chewbaccaHp").appendTo(".enemyCharactersWrapper");
+			$("#darthVader").attr("class", "selectableEnemy");
 			$("#darthVader").appendTo(".enemyCharactersWrapper");
 			$("#darthVaderHp").appendTo(".enemyCharactersWrapper");
 		}
@@ -84,10 +92,13 @@ function setPlayerChar() {
 			playerChar = chewbacca;
 			removeFromAvail(chewbacca);
 			$(this).attr("class", "selected");
+			$("#hanSolo").attr("class", "selectableEnemy");
 			$("#hanSolo").appendTo(".enemyCharactersWrapper");
 			$("#hanSoloHp").appendTo(".enemyCharactersWrapper");
+			$("#r2d2").attr("class", "selectableEnemy");
 			$("#r2d2").appendTo(".enemyCharactersWrapper");
 			$("#r2d2Hp").appendTo(".enemyCharactersWrapper");
+			$("#darthVader").attr("class", "selectableEnemy");
 			$("#darthVader").appendTo(".enemyCharactersWrapper");
 			$("#darthVaderHp").appendTo(".enemyCharactersWrapper");
 		}
@@ -96,10 +107,13 @@ function setPlayerChar() {
 			playerChar = darthVader;
 			removeFromAvail(darthVader);
 			$(this).attr("class", "selected");
+			$("#hanSolo").attr("class", "selectableEnemy");
 			$("#hanSolo").appendTo(".enemyCharactersWrapper");
 			$("#hanSoloHp").appendTo(".enemyCharactersWrapper");
+			$("#r2d2").attr("class", "selectableEnemy");
 			$("#r2d2").appendTo(".enemyCharactersWrapper");
 			$("#r2d2Hp").appendTo(".enemyCharactersWrapper");
+			$("#chewbacca").attr("class", "selectableEnemy");
 			$("#chewbacca").appendTo(".enemyCharactersWrapper");
 			$("#chewbaccaHp").appendTo(".enemyCharactersWrapper");
 		}
@@ -108,6 +122,9 @@ function setPlayerChar() {
 	//HOW TO CHANGE ELEMENT TO MAKE CLICK NOT WORK ON IT ANYMORE?
 	remainingEnemies = availableChars;
 	availableChars = [];
+	//bind select enemy to click on selectable enemies
+	$(".selectableEnemy").on("click", selectEnemy);
+
 	console.log("player char: " + playerChar);
 	console.log("available chars: " + availableChars);
 	console.log("remaining enemies: " + remainingEnemies);
@@ -118,18 +135,28 @@ and set currentenemy */
 function selectEnemy() {
 	switch (this.id) {
 		case "hanSolo": {
-			$("#hanSoloHolder").appendTo(".defenderWrapper");
+			currentDefender = hanSolo;
+			$("#hanSolo").appendTo(".defenderWrapper");
+			$("#hanSoloHp").appendTo(".defenderWrapper");
 		}
 		case "r2d2": {
-			$("#r2d2Holder").appendTo(".defenderWrapper");
+			currentDefender = r2d2;
+			$("#r2d2").appendTo(".defenderWrapper");
+			$("r2d2Hp").appendTo(".defenderWrapper");
 		}
 		case "chewbacca": {
-			$("#chewbaccaHolder").appendTo(".defenderWrapper");
+			currentDefender = chewbacca;
+			$("#chewbacca").appendTo(".defenderWrapper");
+			$("#chewbacca").appendTo(".defenderWrapper");
 		}
 		case "darthVader": {
-			$("#darthVaderHolder").appendTo(".defenderWrapper");
+			currentDefender = darthVader;
+			$("#darthVader").appendTo(".defenderWrapper");
+			$("darthVaderHp").appendTo(".defenderWrapper");
 		}
 	}
+	console.log(currentDefender);
+	$(this).unbind("click");
 }
 function printCombatText() {
 	console.log("You hit " + currentDefender.name + " for " + playerChar.ad + "!");
@@ -144,27 +171,21 @@ function playerAttack() {
 	currentDefender.hp = (currentDefender.hp - playerChar.ad);
 	playerChar.hp = (playerChar.hp - currentDefender.cad);
 	playerChar.ad = playerChar.ad + playerChar.ad;
+	console.log("current defender hp: " + currentDefender.hp);
+	console.log("player hp: " + playerChar.hp);
+	console.log("player ad: " + playerChar.ad);
 }
 
 //game flow
 $(document).ready( function() {
 	startGame();
 	//when an image with class "selectableChar" is clicked, set that character to playerChar
-	if (playerChar === undefined) {
-		$(".selectableChar").on("click", setPlayerChar);
-	}
+	$(".selectableChar").on("click", setPlayerChar);
 
-
-
-
-
-
-
-
-
-
-
-
-
+	$("#attackButton").on("click", playerAttack);
 
 })
+
+//set methods for objects to move them around dom
+//try .each() to look through elements to test for classes????
+//jquery target variables in js not just dom elements
