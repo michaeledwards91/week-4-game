@@ -4,6 +4,7 @@ var hanSolo = {
 	name: "Han Solo",
 	hp: 150,
 	ad: 5,
+	adGrowth: 5,
 	cad: 12
 };
 
@@ -11,13 +12,15 @@ var r2d2 = {
 	name: "R2-D2",
 	hp: 115,
 	ad: 7,
-	cad: 5,
+	adGrowth: 7,
+	cad: 5
 };
 
 var chewbacca = {
 	name: "Chewbacca",
 	hp: 180,
 	ad: 8,
+	adGrowth: 8,
 	cad: 9
 };
 
@@ -25,13 +28,14 @@ var darthVader = {
 	name: "Darth Vader",
 	hp: 200,
 	ad: 10,
+	adGrowth: 10,
 	cad: 20
 };
 //global vars
 var availableChars = [hanSolo, r2d2, chewbacca, darthVader];
 var playerChar;
 var currentDefender;
-var remainingEnemies = [];
+var remainingEnemies = 3;
 //functions
 
 /*start game should put all 4 available characters in the playerCharactersWrapper section as spans.
@@ -40,6 +44,10 @@ function startGame() {
 	$(".defenderWrapper").html("");
 	$(".combatLog").html("");
 	$(".enemyCharactersWrapper").html("");
+	$("#hanSoloHp").text(hanSolo.hp + " HP");
+	$("#r2d2Hp").text(r2d2.hp + " HP");
+	$("#chewbaccaHp").text(chewbacca.hp + " HP");
+	$("#darthVaderHp").text(darthVader.hp + " HP");
 }
 
 function removeFromAvail(char) {
@@ -59,6 +67,7 @@ function setPlayerChar() {
 	switch(this.id) {
 		case "hanSolo": {
 			playerChar = hanSolo;
+			$("#hanSoloHp").attr("id", "playerHp");
 			removeFromAvail(hanSolo);
 			console.log(this);
 			$(this).attr("class", "selected");
@@ -75,6 +84,7 @@ function setPlayerChar() {
 		break;
 		case "r2d2": {
 			playerChar = r2d2;
+			$("#r2d2Hp").attr("id", "playerHp");
 			removeFromAvail(r2d2);
 			$(this).attr("class", "selected");
 			$("#hanSolo").attr("class", "selectableEnemy");
@@ -90,6 +100,7 @@ function setPlayerChar() {
 		break;
 		case "chewbacca": {
 			playerChar = chewbacca;
+			$("#chewbaccaHp").attr("id", "playerHp");
 			removeFromAvail(chewbacca);
 			$(this).attr("class", "selected");
 			$("#hanSolo").attr("class", "selectableEnemy");
@@ -105,6 +116,7 @@ function setPlayerChar() {
 		break;
 		case "darthVader": {
 			playerChar = darthVader;
+			$("#darthVaderHp").attr("id", "playerHp");
 			removeFromAvail(darthVader);
 			$(this).attr("class", "selected");
 			$("#hanSolo").attr("class", "selectableEnemy");
@@ -119,61 +131,93 @@ function setPlayerChar() {
 		}
 		break;
 	}
-	//HOW TO CHANGE ELEMENT TO MAKE CLICK NOT WORK ON IT ANYMORE?
-	remainingEnemies = availableChars;
-	availableChars = [];
 	//bind select enemy to click on selectable enemies
 	$(".selectableEnemy").on("click", selectEnemy);
 
-	console.log("player char: " + playerChar);
-	console.log("available chars: " + availableChars);
+	console.log("player char name: " + playerChar.name);
 	console.log("remaining enemies: " + remainingEnemies);
 	console.log("player char stats: " + playerChar.hp + " " + playerChar.ad + " " + playerChar.cad);
 }
 /*select enemy should remove chosen enemy from remaining enemies section and place in defender section
 and set currentenemy */
 function selectEnemy() {
-	switch (this.id) {
-		case "hanSolo": {
-			currentDefender = hanSolo;
-			$("#hanSolo").appendTo(".defenderWrapper");
-			$("#hanSoloHp").appendTo(".defenderWrapper");
+	if (currentDefender === undefined) {
+		switch (this.id) {
+			case "hanSolo": {
+				currentDefender = hanSolo;
+				$("#hanSolo").appendTo(".defenderWrapper");
+				$("#hanSoloHp").appendTo(".defenderWrapper");
+				$("#hanSoloHp").attr("id", "defenderHp");
+			}
+			break;
+			case "r2d2": {
+				currentDefender = r2d2;
+				$("#r2d2").appendTo(".defenderWrapper");
+				$("#r2d2Hp").appendTo(".defenderWrapper");
+				$("#r2d2Hp").attr("id", "defenderHp");
+			}
+			break;
+			case "chewbacca": {
+				currentDefender = chewbacca;
+				$("#chewbacca").appendTo(".defenderWrapper");
+				$("#chewbaccaHp").appendTo(".defenderWrapper");
+				$("#chewbaccaHp").attr("id", "defenderHp");
+			}
+			break;
+			case "darthVader": {
+				currentDefender = darthVader;
+				$("#darthVader").appendTo(".defenderWrapper");
+				$("#darthVaderHp").appendTo(".defenderWrapper");
+				$("#darthVaderHp").attr("id", "defenderHp");
+			}
+			break;
 		}
-		case "r2d2": {
-			currentDefender = r2d2;
-			$("#r2d2").appendTo(".defenderWrapper");
-			$("r2d2Hp").appendTo(".defenderWrapper");
-		}
-		case "chewbacca": {
-			currentDefender = chewbacca;
-			$("#chewbacca").appendTo(".defenderWrapper");
-			$("#chewbacca").appendTo(".defenderWrapper");
-		}
-		case "darthVader": {
-			currentDefender = darthVader;
-			$("#darthVader").appendTo(".defenderWrapper");
-			$("darthVaderHp").appendTo(".defenderWrapper");
-		}
+		console.log(currentDefender);
+		$(this).unbind("click");
 	}
-	console.log(currentDefender);
-	$(this).unbind("click");
 }
 function printCombatText() {
-	console.log("You hit " + currentDefender.name + " for " + playerChar.ad + "!");
-	console.log(currentDefender.name + " hit you for " + currentDefender.cad + "!");
+	$(".combatLog").html("<p>You hit " + currentDefender.name + " for " + playerChar.ad + "!</p><p>" + currentDefender.name + " hit you for " + currentDefender.cad + "!</p>");
 }
 function updateHp() {
-
+	$("#playerHp").text(playerChar.hp + " HP");
+	$("#defenderHp").text(currentDefender.hp + " HP");
+}
+function playerDeath() {
+	alert("You have died. You lose. Click 'Ok' to try again.");
+	location.reload();
+}
+function enemyDefeated() {
+	$(".defenderWrapper").html("");
+	$(".defenderWrapper").html("<p>You have defeated " + currentDefender.name + ". Select your next opponent.");
+	currentDefender = undefined;
+	remainingEnemies--;
+	console.log(remainingEnemies);
+	if (remainingEnemies === 0) {
+		victory();
+	}
+}
+function victory() {
+	alert("gj. click 'ok' to play this sweet game again.");
+	location.reload();
 }
 /*player attack should attack defender for damage = to players ad. then increase players ad by ad.
 then player should lose hp = to amount of cad enemy has*/
 function playerAttack() {
 	currentDefender.hp = (currentDefender.hp - playerChar.ad);
 	playerChar.hp = (playerChar.hp - currentDefender.cad);
-	playerChar.ad = playerChar.ad + playerChar.ad;
-	console.log("current defender hp: " + currentDefender.hp);
-	console.log("player hp: " + playerChar.hp);
-	console.log("player ad: " + playerChar.ad);
+	playerChar.ad = playerChar.ad + playerChar.adGrowth;
+	printCombatText()
+	console.log(currentDefender.name + " hp: " + currentDefender.hp);
+	console.log(playerChar.name + " hp: " + playerChar.hp);
+	console.log(playerChar.name + " ad: " + playerChar.ad);
+	updateHp();
+	//if characters take fatal damage
+	if (playerChar.hp <= 0) {
+		playerDeath();
+	} else if (currentDefender.hp <= 0) {
+		enemyDefeated();
+	}
 }
 
 //game flow
@@ -181,9 +225,7 @@ $(document).ready( function() {
 	startGame();
 	//when an image with class "selectableChar" is clicked, set that character to playerChar
 	$(".selectableChar").on("click", setPlayerChar);
-
 	$("#attackButton").on("click", playerAttack);
-
 })
 
 //set methods for objects to move them around dom
