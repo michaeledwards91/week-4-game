@@ -1,0 +1,37 @@
+body {
+	background-image: url(../images/starry-background.jpg);
+	color: white;
+	font-family: 'Orbitron', sans-serif;
+}
+img {
+	box-sizing: content-box;
+	background-color: #413D3D;
+    padding: 15px;
+    border: 3px solid white;
+    padding-bottom: 45px;
+    width: 91px;
+    height: 115px;
+    animation-name: selected;
+}
+img.selected {
+	background-color: #0352A5;
+}
+img.selectableEnemy {
+	background-color: #DE0405;
+}
+.charHp {
+	position: relative;
+    bottom: -67px;
+    right: 91px;
+}
+h3 {
+	margin-top: 10px;
+    margin-bottom: 5px;
+}
+button {
+	background-color: red;
+}
+@keyframes selected {
+	from {background-color: #413D3D;}
+	to {background-color: #0352A5;}
+}

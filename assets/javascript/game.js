@@ -1,3 +1,6 @@
+/*describe game flow here when not lazy
+*/
+$(document).ready( function() {
 //characters, Han Solo, R2-D2, Chewbacca, Darth Vader
 //hp - health points, ad - attack damage, cad - counter attack damage
 var hanSolo = {
@@ -5,14 +8,14 @@ var hanSolo = {
 	hp: 150,
 	ad: 5,
 	adGrowth: 5,
-	cad: 12
+	cad: 10
 };
 
 var r2d2 = {
 	name: "R2-D2",
 	hp: 115,
-	ad: 7,
-	adGrowth: 7,
+	ad: 11,
+	adGrowth: 11,
 	cad: 5
 };
 
@@ -29,7 +32,7 @@ var darthVader = {
 	hp: 200,
 	ad: 10,
 	adGrowth: 10,
-	cad: 20
+	cad: 15
 };
 //global vars
 var availableChars = [hanSolo, r2d2, chewbacca, darthVader];
@@ -41,6 +44,7 @@ var remainingEnemies = 3;
 /*start game should put all 4 available characters in the playerCharactersWrapper section as spans.
 defender section should be empty. combat log should be empty. enemies should be empty. */
 function startGame() {
+	$("#playerName").text("You - Select Your Character");
 	$(".defenderWrapper").html("");
 	$(".combatLog").html("");
 	$(".enemyCharactersWrapper").html("");
@@ -59,10 +63,8 @@ function removeFromAvail(char) {
 /*choose player char should be triggered by clicking a character at beginning of game.
 should move all the unchosen characters to the remaining enemies section. */ 
 function setPlayerChar() {
-	/*if id of img clicked is hansolo, set player char to han solo etc
-	IS THERE A BETTER WAY TO DO THIS??????????
-	would like to be able to do something like playerchar = document.getElementById(this.id).id 
-	but that returns a string value, not a reference to a variable*/
+	/*if id of img clicked is hansolo, set player char to han solo etc*/
+	/*this code is gross and obviously inefficient and im embarrassed that you're looking at it i promise i wont do it again*/
 	$(".selectableChar").unbind("click");
 	switch(this.id) {
 		case "hanSolo": {
@@ -131,6 +133,7 @@ function setPlayerChar() {
 		}
 		break;
 	}
+	$("#playerName").text("You - " + playerChar.name);
 	//bind select enemy to click on selectable enemies
 	$(".selectableEnemy").on("click", selectEnemy);
 
@@ -142,6 +145,7 @@ function setPlayerChar() {
 and set currentenemy */
 function selectEnemy() {
 	if (currentDefender === undefined) {
+		$(".defenderWrapper").html("");
 		switch (this.id) {
 			case "hanSolo": {
 				currentDefender = hanSolo;
@@ -174,19 +178,26 @@ function selectEnemy() {
 		}
 		console.log(currentDefender);
 		$(this).unbind("click");
+		$("#defenderName").text("Defender - " + currentDefender.name);
 	}
 }
+
 function printCombatText() {
 	$(".combatLog").html("<p>You hit " + currentDefender.name + " for " + playerChar.ad + "!</p><p>" + currentDefender.name + " hit you for " + currentDefender.cad + "!</p>");
 }
+
 function updateHp() {
 	$("#playerHp").text(playerChar.hp + " HP");
 	$("#defenderHp").text(currentDefender.hp + " HP");
 }
+
 function playerDeath() {
 	alert("You have died. You lose. Click 'Ok' to try again.");
 	location.reload();
 }
+/*enemy defeated clears the defender section and prompts the user to select a new enemy.
+sets current defender to undefined to enable clicks on remaining enemies
+checks to see that there are enemies remaining, if there aren't, run victory*/
 function enemyDefeated() {
 	$(".defenderWrapper").html("");
 	$(".defenderWrapper").html("<p>You have defeated " + currentDefender.name + ". Select your next opponent.");
@@ -201,7 +212,7 @@ function victory() {
 	alert("gj. click 'ok' to play this sweet game again.");
 	location.reload();
 }
-/*player attack should attack defender for damage = to players ad. then increase players ad by ad.
+/*player attack should attack defender for damage = to players ad. then increase players ad by adGrowth.
 then player should lose hp = to amount of cad enemy has*/
 function playerAttack() {
 	currentDefender.hp = (currentDefender.hp - playerChar.ad);
@@ -220,14 +231,8 @@ function playerAttack() {
 	}
 }
 
-//game flow
-$(document).ready( function() {
-	startGame();
-	//when an image with class "selectableChar" is clicked, set that character to playerChar
-	$(".selectableChar").on("click", setPlayerChar);
-	$("#attackButton").on("click", playerAttack);
+startGame();
+//when an image with class "selectableChar" is clicked, set that character to playerChar
+$(".selectableChar").on("click", setPlayerChar);
+$("#attackButton").on("click", playerAttack);
 })
-
-//set methods for objects to move them around dom
-//try .each() to look through elements to test for classes????
-//jquery target variables in js not just dom elements
